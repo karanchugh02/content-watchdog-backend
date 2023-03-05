@@ -8,5 +8,8 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 exports.env = {
     PORT: process.env.PORT,
+    S3_UPLOAD_KEY: process.env.S3_UPLOAD_KEY,
+    S3_UPLOAD_SECRET: process.env.S3_UPLOAD_SECRET,
+    BUCKET: process.env.BUCKET,
 };
 //# sourceMappingURL=env.js.map
