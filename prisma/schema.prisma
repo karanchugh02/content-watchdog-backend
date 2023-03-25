@@ -77,14 +77,21 @@ model Organization {
 }
 
 enum AnalysisStatus {
-    QUEUED
     PROCESSING
     PROCESSED
 }
 
+enum ContentType {
+    IMAGE
+    VIDEO
+    TEXT
+    AUDIO
+}
+
 model AnalysisRecord {
     id             Int            @id @default(autoincrement())
-    imageUrl       String
+    s3Key          String
+    contentType    ContentType
     organizationId Int
     organization   Organization   @relation(fields: [organizationId], references: [id])
     results        Json?
