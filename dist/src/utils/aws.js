@@ -57,14 +57,6 @@ class Aws {
     static videoScanner(key) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const params = {
-                    Image: {
-                        S3Object: {
-                            Bucket: constants_1.env.BUCKET,
-                            Name: key,
-                        },
-                    },
-                };
                 const response = yield rekogClient.send(new client_rekognition_1.StartContentModerationCommand({
                     Video: { S3Object: { Bucket: constants_1.env.BUCKET, Name: key } },
                 }));
@@ -74,6 +66,19 @@ class Aws {
             catch (err) {
                 console.log('Error', err);
                 return { status: false, message: err.message };
+            }
+        });
+    }
+    static videoStatusFetcher(jobId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const response = yield rekogClient.send(new client_rekognition_1.GetContentModerationCommand({ JobId: jobId }));
+                console.log('response is ', response);
+                return { status: true, data: response };
+            }
+            catch (e) {
+                console.log('Error ', e);
+                return { status: false, message: e.message };
             }
         });
     }
