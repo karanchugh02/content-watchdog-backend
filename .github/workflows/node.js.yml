@@ -8,7 +8,7 @@ on:
     branches: ['main']
   pull_request:
     branches: ['main']
-    
+
 jobs:
   cache-and-install:
     runs-on: self-hosted
@@ -44,18 +44,19 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        
+
       - name: Add env variables
-        run: echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env && echo PORT=${{ secrets.PORT }} >> .env && echo S3_UPLOAD_KEY=${{ secrets.S3_UPLOAD_KEY }} >> .env && echo S3_UPLOAD_SECRET=${{ secrets.S3_UPLOAD_SECRET }} >> .env && echo BUCKET=${{ secrets.BUCKET }} >> .env && echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} 
-        
+        run: echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env && echo PORT=${{ secrets.PORT }} >> .env && echo S3_UPLOAD_KEY=${{ secrets.S3_UPLOAD_KEY }} >> .env && echo S3_UPLOAD_SECRET=${{ secrets.S3_UPLOAD_SECRET }} >> .env && echo BUCKET=${{ secrets.BUCKET }} >> .env && echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+
       - name: Generate Prisma
         run: npx prisma generate db
-        
-      - name: Build
-        run: pnpm build
-      
+
       - name: Install pm2
         run: npm i pm2 -g
 
-      - name: Restart Pm2
-        run: pm2 restart content-watch-dog
+      - name: Delete Pm2
+        run: pm2 delete content-watch-dog
+
+      - name: Start Pm2
+        run : pm2 start dist/src/server.js --name "content-watch-dog"
+      
