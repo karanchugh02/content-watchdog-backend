@@ -1,0 +1,61 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+    
+jobs:
+  cache-and-install:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+        
+      - name: Add env variables
+        run: echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env && echo PORT=${{ secrets.PORT }} >> .env && echo S3_UPLOAD_KEY=${{ secrets.S3_UPLOAD_KEY }} >> .env && echo S3_UPLOAD_SECRET=${{ secrets.S3_UPLOAD_SECRET }} >> .env && echo BUCKET=${{ secrets.BUCKET }} >> .env && echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} 
+        
+      - name: Generate Prisma
+        run: npx prisma generate db
+        
+      - name: Build
+        run: pnpm build
+      
+      - name: Install pm2
+        run: npm i pm2 -g
+
+      - name: Restart Pm2
+        run: pm2 restart content-watch-dog
