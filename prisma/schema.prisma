@@ -48,16 +48,17 @@ model VerificationToken {
 }
 
 model User {
-    id            Int            @id @default(autoincrement())
-    name          String?        @default("User")
-    email         String?        @unique
-    emailVerified DateTime?
-    image         String?        @default("https://avatars.dicebear.com/api/open-peeps/imggggg.svg")
-    createdAt     DateTime       @default(now())
-    updatedAt     DateTime       @updatedAt
-    Account       Account[]
-    Session       Session[]
-    Organization  Organization[]
+    id             Int            @id @default(autoincrement())
+    name           String?        @default("User")
+    email          String?        @unique
+    emailVerified  DateTime?
+    image          String?        @default("https://avatars.dicebear.com/api/open-peeps/imggggg.svg")
+    createdAt      DateTime       @default(now())
+    onboardingDone Boolean        @default(false)
+    updatedAt      DateTime       @updatedAt
+    Account        Account[]
+    Session        Session[]
+    Organization   Organization[]
 
     @@map("users")
 }
@@ -68,10 +69,12 @@ model Organization {
     user          User @relation(fields: [userId], references: [id])
     walletBalance Int  @default(100)
 
-    createdAt      DateTime         @default(now())
-    updatedAt      DateTime         @updatedAt
-    AnalysisRecord AnalysisRecord[]
-    Transaction    Transaction[]
+    createdAt           DateTime              @default(now())
+    updatedAt           DateTime              @updatedAt
+    Transaction         Transaction[]
+    ImageAnalysisRecord ImageAnalysisRecord[]
+    VideoAnalysisRecord VideoAnalysisRecord[]
+    TextAnalysisRecord  TextAnalysisRecord[]
 
     @@map("organization")
 }
@@ -88,18 +91,43 @@ enum ContentType {
     AUDIO
 }
 
-model AnalysisRecord {
-    id             Int            @id @default(autoincrement())
+model ImageAnalysisRecord {
+    id             Int          @id @default(autoincrement())
     s3Key          String
-    contentType    ContentType
     organizationId Int
-    organization   Organization   @relation(fields: [organizationId], references: [id])
-    results        Json?
-    status         AnalysisStatus
-    createdAt      DateTime       @default(now())
-    updatedAt      DateTime       @updatedAt
+    organization   Organization @relation(fields: [organizationId], references: [id])
+    results        Json
+    createdAt      DateTime     @default(now())
+    updatedAt      DateTime     @updatedAt
 
-    @@map("analysisrecord")
+    @@map("imageanalysisrecord")
+}
+
+model VideoAnalysisRecord {
+    id             Int          @id @default(autoincrement())
+    s3Key          String
+    jobId          String
+    results        Json?
+    status         String
+    organizationId Int
+    organization   Organization @relation(fields: [organizationId], references: [id])
+    createdAt      DateTime     @default(now())
+    updatedAt      DateTime     @updatedAt
+
+    @@unique([jobId])
+    @@map("videoanalysisrecord")
+}
+
+model TextAnalysisRecord {
+    id             Int          @id @default(autoincrement())
+    text           String
+    organizationId Int
+    organization   Organization @relation(fields: [organizationId], references: [id])
+    results        Json
+    createdAt      DateTime     @default(now())
+    updatedAt      DateTime     @updatedAt
+
+    @@map("textanalysisrecord")
 }
 
 model Transaction {

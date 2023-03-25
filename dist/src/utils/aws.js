@@ -54,6 +54,29 @@ class Aws {
             }
         });
     }
+    static videoScanner(key) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const params = {
+                    Image: {
+                        S3Object: {
+                            Bucket: constants_1.env.BUCKET,
+                            Name: key,
+                        },
+                    },
+                };
+                const response = yield rekogClient.send(new client_rekognition_1.StartContentModerationCommand({
+                    Video: { S3Object: { Bucket: constants_1.env.BUCKET, Name: key } },
+                }));
+                console.log('response is ', response);
+                return { status: true, data: response };
+            }
+            catch (err) {
+                console.log('Error', err);
+                return { status: false, message: err.message };
+            }
+        });
+    }
     static uploadToS3(imageUrl, key) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {

@@ -1,5 +1,6 @@
 import {
   DetectModerationLabelsCommand,
+  GetContentModerationCommand,
   StartContentModerationCommand,
 } from '@aws-sdk/client-rekognition';
 import { RekognitionClient } from '@aws-sdk/client-rekognition';
@@ -48,14 +49,6 @@ class Aws {
 
   public static async videoScanner(key: string) {
     try {
-      const params = {
-        Image: {
-          S3Object: {
-            Bucket: env.BUCKET,
-            Name: key,
-          },
-        },
-      };
       const response = await rekogClient.send(
         new StartContentModerationCommand({
           Video: { S3Object: { Bucket: env.BUCKET, Name: key } },
@@ -67,6 +60,19 @@ class Aws {
     } catch (err) {
       console.log('Error', err);
       return { status: false, message: err.message };
+    }
+  }
+
+  public static async videoStatusFetcher(jobId: string) {
+    try {
+      const response = await rekogClient.send(
+        new GetContentModerationCommand({ JobId: jobId })
+      );
+      console.log('response is ', response);
+      return { status: true, data: response };
+    } catch (e) {
+      console.log('Error ', e);
+      return { status: false, message: e.message };
     }
   }
 
