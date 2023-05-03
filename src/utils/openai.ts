@@ -5,7 +5,12 @@ class OpenAi {
     let response = await axios.post(
       `https://api.openai.com/v1/moderations`,
       { input: text },
-      { headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` } }
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+        },
+      }
     );
     return response.data;
   }

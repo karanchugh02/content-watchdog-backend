@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import prisma from '../../lib/prisma';
 import { env } from '../../constants';
 import moment from 'moment';
+import { NextFunction, Request, Response } from 'express';
 class AuthHandler {
   public static async hashPassword(plainPassword: string) {
     let saltRounds = 10;
@@ -23,7 +24,7 @@ class AuthHandler {
     if (await bcrypt.compare(plainPassword, orgData.password)) {
       let tokenPayload = { orgId: orgData.id, email: orgData.email };
       let token = jwt.sign(tokenPayload, env.JWT_SECRET, {
-        expiresIn: '4h',
+        expiresIn: '24h',
       });
       console.log('time', moment().utcOffset('+0530').add(4, 'hours').toDate());
       return {
@@ -38,6 +39,29 @@ class AuthHandler {
       };
     } else {
       return { status: false, message: 'Wrong Credentials!!' };
+    }
+  }
+
+  public static async verifyUserMiddleware(
+    req: any,
+    res: Response,
+    next: NextFunction
+  ) {
+    let authToken = req.headers.authorization;
+    if (!authToken) {
+      return res.send({ status: false, message: 'User Not Authenticated' });
+    }
+
+    let result: any = jwt.verify(authToken, env.JWT_SECRET);
+    console.log('result is ', result);
+    if (result) {
+      // req.user = next();
+      req.user = {
+        id: result.orgId,
+      };
+      next();
+    } else {
+      return res.send({ status: false, message: 'Token Invalid' });
     }
   }
 }

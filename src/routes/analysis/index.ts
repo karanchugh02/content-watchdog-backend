@@ -76,6 +76,7 @@ analysisRouter.post('/scan-text', async (req, res) => {
     AnalysisUtils.textLogCreater(text, textData.results);
     return res.send({ status: true, data: textData });
   } catch (e) {
+    console.log('error ', e);
     return res.send({ status: false, message: e.message });
   }
 });

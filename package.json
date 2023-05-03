@@ -29,7 +29,10 @@
     "jsonwebtoken": "^9.0.0",
     "moment": "^2.29.4",
     "morgan": "^1.10.0",
+    "randombytes": "^2.1.0",
+    "razorpay": "^2.8.6",
     "request": "^2.88.2",
+    "shortid": "^2.2.16",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
@@ -42,6 +45,7 @@
     "@types/jsonwebtoken": "^9.0.1",
     "@types/morgan": "^1.9.4",
     "@types/node": "^18.11.15",
+    "@types/shortid": "^0.0.29",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "eslint": "^8.29.0",
