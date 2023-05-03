@@ -17,7 +17,12 @@ const constants_1 = require("../../constants");
 class OpenAi {
     static textScanner(text) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield axios_1.default.post(`https://api.openai.com/v1/moderations`, { input: text }, { headers: { Authorization: `Bearer ${constants_1.env.OPENAI_API_KEY}` } });
+            let response = yield axios_1.default.post(`https://api.openai.com/v1/moderations`, { input: text }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${constants_1.env.OPENAI_API_KEY}`,
+                },
+            });
             return response.data;
         });
     }

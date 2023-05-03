@@ -13,5 +13,7 @@ exports.env = {
     BUCKET: process.env.BUCKET,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     JWT_SECRET: process.env.JWT_SECRET,
+    RAZORPAY_KEY: process.env.RAZORPAY_KEY,
+    RAZORPAY_PASS: process.env.RAZORPAY_PASS,
 };
 //# sourceMappingURL=env.js.map

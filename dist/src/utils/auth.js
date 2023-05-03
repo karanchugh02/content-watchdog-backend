@@ -37,7 +37,7 @@ class AuthHandler {
             if (yield bcryptjs_1.default.compare(plainPassword, orgData.password)) {
                 let tokenPayload = { orgId: orgData.id, email: orgData.email };
                 let token = jsonwebtoken_1.default.sign(tokenPayload, constants_1.env.JWT_SECRET, {
-                    expiresIn: '4h',
+                    expiresIn: '24h',
                 });
                 console.log('time', (0, moment_1.default)().utcOffset('+0530').add(4, 'hours').toDate());
                 return {
@@ -53,6 +53,26 @@ class AuthHandler {
             }
             else {
                 return { status: false, message: 'Wrong Credentials!!' };
+            }
+        });
+    }
+    static verifyUserMiddleware(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let authToken = req.headers.authorization;
+            if (!authToken) {
+                return res.send({ status: false, message: 'User Not Authenticated' });
+            }
+            let result = jsonwebtoken_1.default.verify(authToken, constants_1.env.JWT_SECRET);
+            console.log('result is ', result);
+            if (result) {
+                // req.user = next();
+                req.user = {
+                    id: result.orgId,
+                };
+                next();
+            }
+            else {
+                return res.send({ status: false, message: 'Token Invalid' });
             }
         });
     }

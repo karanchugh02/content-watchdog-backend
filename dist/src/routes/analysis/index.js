@@ -87,6 +87,7 @@ analysisRouter.post('/scan-text', (req, res) => __awaiter(void 0, void 0, void 0
         return res.send({ status: true, data: textData });
     }
     catch (e) {
+        console.log('error ', e);
         return res.send({ status: false, message: e.message });
     }
 }));
