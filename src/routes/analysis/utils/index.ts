@@ -1,12 +1,15 @@
+import { price } from '../../../../constants/price';
 import prisma from '../../../../lib/prisma';
 
 class AnalysisUtils {
   public static async imageLogCreator({
     key,
     results,
+    orgId,
   }: {
     key: string;
     results: Array<any>;
+    orgId: number;
   }) {
     let newLogs = await prisma.imageAnalysisRecord.create({
       data: {
@@ -14,13 +17,24 @@ class AnalysisUtils {
         results,
         organization: {
           connect: {
-            id: 1, //todo add org id after auth
+            id: orgId,
           },
         },
       },
     });
 
-    console.log('new logs are ', newLogs);
+    let updatedOrganization = await prisma.organization.update({
+      where: {
+        id: orgId,
+      },
+      data: {
+        walletBalance: {
+          decrement: price.image,
+        },
+      },
+    });
+
+    console.log('new logs are ', newLogs, updatedOrganization);
 
     return;
   }
@@ -28,9 +42,11 @@ class AnalysisUtils {
   public static async videoLogCreator({
     key,
     JobId,
+    orgId,
   }: {
     key: string;
     JobId: string;
+    orgId: number;
   }) {
     let newLogs = await prisma.videoAnalysisRecord.create({
       data: {
@@ -39,8 +55,19 @@ class AnalysisUtils {
         status: 'PROCESSING',
         organization: {
           connect: {
-            id: 1, //todo add org id after auth
+            id: orgId,
           },
+        },
+      },
+    });
+
+    let updatedOrganization = await prisma.organization.update({
+      where: {
+        id: orgId,
+      },
+      data: {
+        walletBalance: {
+          decrement: price.video,
         },
       },
     });
@@ -68,15 +95,31 @@ class AnalysisUtils {
     return;
   }
 
-  public static async textLogCreater(text: string, results: any) {
+  public static async textLogCreater(
+    text: string,
+    results: any,
+    orgId: number
+  ) {
+    console.log('in data ', text, results, orgId);
     let newLog = await prisma.textAnalysisRecord.create({
       data: {
         text,
         results,
         organization: {
           connect: {
-            id: 1,
+            id: orgId,
           },
+        },
+      },
+    });
+
+    let updatedOrganization = await prisma.organization.update({
+      where: {
+        id: orgId,
+      },
+      data: {
+        walletBalance: {
+          decrement: price.text,
         },
       },
     });

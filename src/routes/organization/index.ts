@@ -203,4 +203,58 @@ orgRouter.get(
   }
 );
 
+orgRouter.get(
+  '/get-image-data',
+  AuthHandler.verifyUserMiddleware,
+  async (req: any, res) => {
+    try {
+      let data = await prisma.imageAnalysisRecord.findMany({
+        where: {
+          organizationId: req.user.id,
+        },
+      });
+
+      return res.send({ status: true, data });
+    } catch (e) {
+      return res.send({ status: false, message: e.message });
+    }
+  }
+);
+
+orgRouter.get(
+  '/get-text-data',
+  AuthHandler.verifyUserMiddleware,
+  async (req: any, res) => {
+    try {
+      let data = await prisma.textAnalysisRecord.findMany({
+        where: {
+          organizationId: req.user.id,
+        },
+      });
+
+      return res.send({ status: true, data });
+    } catch (e) {
+      return res.send({ status: false, message: e.message });
+    }
+  }
+);
+
+orgRouter.get(
+  '/get-video-data',
+  AuthHandler.verifyUserMiddleware,
+  async (req: any, res) => {
+    try {
+      let data = await prisma.videoAnalysisRecord.findMany({
+        where: {
+          organizationId: req.user.id,
+        },
+      });
+
+      return res.send({ status: true, data });
+    } catch (e) {
+      return res.send({ status: false, message: e.message });
+    }
+  }
+);
+
 module.exports = orgRouter;

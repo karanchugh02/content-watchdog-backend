@@ -64,6 +64,37 @@ class AuthHandler {
       return res.send({ status: false, message: 'Token Invalid' });
     }
   }
+
+  public static async apiServiceMiddleware(
+    req: any,
+    res: Response,
+    next: NextFunction
+  ) {
+    console.log('req headers ', req.headers);
+    let accessKey = req.headers['access-key'];
+    let accessSecret = req.headers['access-secret'];
+    if (accessKey == undefined || accessSecret == undefined) {
+      return res.send({
+        status: false,
+        message: 'Please pass access credentials',
+      });
+    }
+    console.log('in request ', accessKey, accessSecret);
+
+    let checkKey = await prisma.apiKeys.findFirst({
+      where: {
+        accessKey,
+        accessSecret,
+      },
+    });
+
+    if (checkKey) {
+      req.org = { id: checkKey.organizationId };
+      next();
+    } else {
+      return res.send({ status: false, message: 'Not Authorized' });
+    }
+  }
 }
 
 export default AuthHandler;
