@@ -191,5 +191,44 @@ orgRouter.get('/get-api-key', auth_1.default.verifyUserMiddleware, (req, res) =>
         return res.send({ status: false, message: e.message });
     }
 }));
+orgRouter.get('/get-image-data', auth_1.default.verifyUserMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let data = yield prisma_1.default.imageAnalysisRecord.findMany({
+            where: {
+                organizationId: req.user.id,
+            },
+        });
+        return res.send({ status: true, data });
+    }
+    catch (e) {
+        return res.send({ status: false, message: e.message });
+    }
+}));
+orgRouter.get('/get-text-data', auth_1.default.verifyUserMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let data = yield prisma_1.default.textAnalysisRecord.findMany({
+            where: {
+                organizationId: req.user.id,
+            },
+        });
+        return res.send({ status: true, data });
+    }
+    catch (e) {
+        return res.send({ status: false, message: e.message });
+    }
+}));
+orgRouter.get('/get-video-data', auth_1.default.verifyUserMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let data = yield prisma_1.default.videoAnalysisRecord.findMany({
+            where: {
+                organizationId: req.user.id,
+            },
+        });
+        return res.send({ status: true, data });
+    }
+    catch (e) {
+        return res.send({ status: false, message: e.message });
+    }
+}));
 module.exports = orgRouter;
 //# sourceMappingURL=index.js.map

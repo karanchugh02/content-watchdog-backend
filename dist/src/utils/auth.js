@@ -76,6 +76,33 @@ class AuthHandler {
             }
         });
     }
+    static apiServiceMiddleware(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('req headers ', req.headers);
+            let accessKey = req.headers['access-key'];
+            let accessSecret = req.headers['access-secret'];
+            if (accessKey == undefined || accessSecret == undefined) {
+                return res.send({
+                    status: false,
+                    message: 'Please pass access credentials',
+                });
+            }
+            console.log('in request ', accessKey, accessSecret);
+            let checkKey = yield prisma_1.default.apiKeys.findFirst({
+                where: {
+                    accessKey,
+                    accessSecret,
+                },
+            });
+            if (checkKey) {
+                req.org = { id: checkKey.organizationId };
+                next();
+            }
+            else {
+                return res.send({ status: false, message: 'Not Authorized' });
+            }
+        });
+    }
 }
 exports.default = AuthHandler;
 //# sourceMappingURL=auth.js.map

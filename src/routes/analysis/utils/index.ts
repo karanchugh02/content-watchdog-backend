@@ -6,15 +6,18 @@ class AnalysisUtils {
     key,
     results,
     orgId,
+    s3Url,
   }: {
     key: string;
     results: Array<any>;
     orgId: number;
+    s3Url: string;
   }) {
     let newLogs = await prisma.imageAnalysisRecord.create({
       data: {
         s3Key: key,
         results,
+        s3Url: s3Url,
         organization: {
           connect: {
             id: orgId,
@@ -43,15 +46,19 @@ class AnalysisUtils {
     key,
     JobId,
     orgId,
+    s3Url,
   }: {
     key: string;
     JobId: string;
     orgId: number;
+    s3Url: string;
   }) {
+    console.log('in function data ', key, JobId, orgId, s3Url);
     let newLogs = await prisma.videoAnalysisRecord.create({
       data: {
         s3Key: key,
         jobId: JobId,
+        s3Url,
         status: 'PROCESSING',
         organization: {
           connect: {
