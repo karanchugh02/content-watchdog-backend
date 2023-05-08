@@ -8,7 +8,14 @@ const PORT = env.PORT;
 
 app.use(morgan('combined'));
 app.use(express.json());
-app.use(cors({ origin: ['http://localhost:3000'] }));
+app.use(
+  cors({
+    origin: [
+      'http://localhost:3000',
+      'https://api.contentwatchdog.karanchugh.in',
+    ],
+  })
+);
 
 app.use('/', require('./routes/routes'));
 
