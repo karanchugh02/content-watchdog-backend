@@ -54,8 +54,5 @@ jobs:
       - name: Install pm2
         run: npm i pm2 -g
 
-      - name: Delete Pm2
-        run: pm2 delete content-watch-dog
-
       - name: Start Pm2
         run: pm2 start dist/src/server.js --name "content-watch-dog"
